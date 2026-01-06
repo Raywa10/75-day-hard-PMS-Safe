@@ -254,6 +254,9 @@ export default function Landing() {
               Built with care. Your data stays yours.
             </p>
           </div>
+          <div className="mt-4 text-center">
+            <p className="text-xs text-muted-foreground/60">made by raywa :)</p>
+          </div>
         </div>
       </footer>
     </div>

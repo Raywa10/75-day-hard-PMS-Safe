@@ -272,6 +272,11 @@ export default function Auth() {
           </p>
         </div>
       </main>
+
+      {/* Footer Watermark */}
+      <footer className="py-4 text-center">
+        <p className="text-xs text-muted-foreground/60">made by raywa :)</p>
+      </footer>
     </div>
   );
 }

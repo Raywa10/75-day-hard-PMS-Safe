@@ -146,9 +146,14 @@ export function AppLayout({ children }: AppLayoutProps) {
       )}
 
       {/* Main Content */}
-      <main className="pt-14 md:pt-16 pb-20 md:pb-8">
+      <main className="pt-14 md:pt-16 pb-20 md:pb-12">
         {children}
       </main>
+
+      {/* Footer Watermark */}
+      <footer className="hidden md:block fixed bottom-0 left-0 right-0 py-2 text-center bg-background/50 backdrop-blur-sm z-40">
+        <p className="text-xs text-muted-foreground/60">made by raywa :)</p>
+      </footer>
 
       {/* Mobile Bottom Nav */}
       <nav className="md:hidden fixed bottom-0 left-0 right-0 h-16 bg-card/95 backdrop-blur-lg border-t border-border z-50">
