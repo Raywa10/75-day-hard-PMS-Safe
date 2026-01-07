@@ -394,20 +394,20 @@ export async function getCurrentDayNumber(userId: string): Promise<number> {
   return data?.day_number || 1;
 }
 
-// Full seed routine for new users
+// Check if user data already exists
+export async function hasUserData(userId: string): Promise<boolean> {
+  const { data } = await supabase
+    .from('challenge_days')
+    .select('id')
+    .eq('user_id', userId)
+    .limit(1);
+  return (data?.length ?? 0) > 0;
+}
+
+// Full seed routine for new users (only seeds structure, not all tasks)
 export async function seedUserData(userId: string, fullName?: string): Promise<void> {
   await ensureProfile(userId, fullName);
   await ensureUserSettings(userId);
   await ensureChallengeDays(userId);
-
-  // Ensure tasks for all days
-  const days = await getChallengeDays(userId);
-  const settings = await getUserSettings(userId);
-
-  if (days && settings) {
-    for (const day of days) {
-      const isPMS = isInPMSWindow(parseISO(day.date), settings);
-      await ensureTasks(userId, day.id, isPMS);
-    }
-  }
+  // Note: Tasks are created on-demand for each day when needed
 }

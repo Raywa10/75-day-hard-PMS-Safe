@@ -12,7 +12,7 @@ import { useToast } from '@/hooks/use-toast';
 import confetti from 'canvas-confetti';
 import { Check, Sparkles } from 'lucide-react';
 import {
-  seedUserData, getUserSettings, getChallengeDays, getChallengeDayByDate,
+  seedUserData, hasUserData, getUserSettings, getChallengeDays, getChallengeDayByDate,
   getChallengeDay, getTasks, updateTask, updateChallengeDay, calculateStreak,
   isInPMSWindow, ensureTasks,
 } from '@/lib/database';
@@ -42,12 +42,22 @@ export default function Dashboard() {
     if (!user) return;
     setLoading(true);
     try {
-      await seedUserData(user.id);
-      const userSettings = await getUserSettings(user.id);
+      // Only seed if user data doesn't exist
+      const userHasData = await hasUserData(user.id);
+      if (!userHasData) {
+        await seedUserData(user.id);
+      }
+
+      // Parallelize independent queries
+      const [userSettings, allDays, todayDay] = await Promise.all([
+        getUserSettings(user.id),
+        getChallengeDays(user.id),
+        getChallengeDayByDate(user.id, new Date()),
+      ]);
+
       setSettings(userSettings);
-      const allDays = await getChallengeDays(user.id);
       setDays(allDays);
-      const todayDay = await getChallengeDayByDate(user.id, new Date());
+
       if (todayDay && userSettings) {
         setCurrentDay(todayDay);
         const isPMS = isInPMSWindow(parseISO(todayDay.date), userSettings);
@@ -55,7 +65,10 @@ export default function Dashboard() {
         const dayTasks = await getTasks(todayDay.id);
         setTasks(dayTasks);
       }
-      setStreak(await calculateStreak(user.id));
+
+      // Calculate streak in parallel with other operations
+      const streakValue = await calculateStreak(user.id);
+      setStreak(streakValue);
     } catch (error) {
       console.error('Error loading dashboard:', error);
       toast({ title: 'Error', description: 'Failed to load data.', variant: 'destructive' });
