@@ -14,8 +14,12 @@ A full-stack habit and challenge tracking application with a PMS-Safe mode. User
 - PMS-Safe configuration (cycle length, PMS window, water goal adjustments)
 - Progress analytics including completion rate, streaks, and task consistency
 
+Note: This project uses Supabase for authentication and data storage. Environment variables must be configured before running locally.
+
 ## Local Development
+```bash
 npm install
 npm run dev
 
-Note: This project uses Supabase for authentication and data storage. Environment variables must be configured before running locally.
+
+
